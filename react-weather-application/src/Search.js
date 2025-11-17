@@ -62,6 +62,7 @@ export default function Search(){
         
 
         let apiKey="7524fc5d6f2f47dbb82140200251711";
+        console.log(apiKey);
         let apiUrl=`https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${location}&days=7`;
         axios.get(apiUrl).then(response =>{console.log(response.data); showWeather(response);weeklyForecast(response); setLoading(false); });
     }
