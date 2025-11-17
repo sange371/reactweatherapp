@@ -53,7 +53,7 @@ export default function Search(){
 
         return `${day} ${hours}:${minutes}`;
     }
-
+ 
     function handleSubmit(event){
         event.preventDefault();
         if(!location)return;
@@ -110,7 +110,7 @@ export default function Search(){
                 <div className="forecast">
                     {forecast.slice(0,6).map((day,index) => {
                         let date = new Date(day.date);
-                        let weekdays=date.toLocaleDateString("en-US",{weekday: "short" });
+                        let weekdays=date.toLocaleDateString("en-US",{weekdays: "short" });
 
                         return(
                             <div className="forecast-day" key={index}>
