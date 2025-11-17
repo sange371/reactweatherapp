@@ -109,18 +109,22 @@ export default function Search(){
             </div>
             {forecast.length >0 &&(
                 <div className="forecast">
-                    {forecast.slice(0,6).map((day,index) => {
+                    {forecast.slice(1,7).map((day,index) => {
                         let date = new Date(day.date);
-                        let weekdays=date.toLocaleDateString("en-US",{weekdays: "short" });
+                        let weekdays=["Sun","Mon","Tue","Wed","Thur","Fri","Sat"];
+                        let days=weekdays[date.getDay()];
 
                         return(
                             <div className="forecast-day" key={index}>
-                                <div className="weekday">{weekdays}</div>
+                        
+                                <div className="weekday">{days}</div>
+                                <br/>
                                 <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} className="forecast-icon"/>
                                 <div className="forecast-temp">
-                                    <strong>{Math.round(day.day.maxtemp_c)}°</strong>{""}
+                                    <strong>{Math.round(day.day.maxtemp_c)}°</strong>{" "}
                                     {Math.round(day.day.mintemp_c)}°
                                 </div>
+
                             </div>
                         );
 
