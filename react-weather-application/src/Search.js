@@ -8,6 +8,7 @@ import "./Search.css";
 export default function Search(){
     let [loading , setLoading]=useState(false);
     let [searchedCity, setSearchedCity]=useState("");
+    let [forecast, setForecast]=useState([]);
     let [location, setLocation]=useState("");
     let [temperature, setTemperature]=useState(null);
     let [icon, setIcon]=useState(null);
@@ -31,6 +32,16 @@ export default function Search(){
         
 
     }
+
+    function weeklyForecast(response){
+    if (response.data.forecast && response.data.forecast.forecastday) {
+        setForecast(response.data.forecast.forecastday);
+    } else {
+        console.error("Forecast data not available", response.data);
+        setForecast([]); // prevents crash
+    }
+}
+
     function realDate(response){
         let cityTime=response.data.location.localtime;
         let now=new Date(cityTime);
@@ -44,12 +55,15 @@ export default function Search(){
     }
 
     function handleSubmit(event){
-        if(!location)return;
-        setLoading(true);
         event.preventDefault();
-        let apiKey="f14507b3be58405eac494548250411";
-        let apiUrl=`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}`;
-        axios.get(apiUrl).then(response =>{ showWeather(response); setLoading(false); });
+        if(!location)return;
+
+        setLoading(true);
+        
+
+        let apiKey="7524fc5d6f2f47dbb82140200251711";
+        let apiUrl=`https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${location}&days=7`;
+        axios.get(apiUrl).then(response =>{console.log(response.data); showWeather(response);weeklyForecast(response); setLoading(false); });
     }
 
     function updateLocation(event){
@@ -61,7 +75,7 @@ export default function Search(){
         
         <div className="Search">
             <form onSubmit={handleSubmit}>
-                <input type="search" placeholder="Search for a city" className="city"  autofocus onChange={updateLocation}/>
+                <input type="search" placeholder="Search for a city" className="city"  autoFocus onChange={updateLocation}/>
                 <input type="submit" value="Search" className="button"/>
             </form>
             {loading && (
@@ -92,6 +106,26 @@ export default function Search(){
                     </ul>
                 </div>
             </div>
+            {forecast.length >0 &&(
+                <div className="forecast">
+                    {forecast.slice(0,6).map((day,index) => {
+                        let date = new Date(day.date);
+                        let weekdays=date.toLocaleDateString("en-US",{weekday: "short" });
+
+                        return(
+                            <div className="forecast-day" key={index}>
+                                <div className="weekday">{weekdays}</div>
+                                <img src={`https:${day.day.condition.icon}`} alt={day.day.condition.text} className="forecast-icon"/>
+                                <div className="forecast-temp">
+                                    <strong>{Math.round(day.day.maxtemp_c)}°</strong>{""}
+                                    {Math.round(day.day.mintemp_c)}°
+                                </div>
+                            </div>
+                        );
+
+                    })}
+                </div>
+            )}
         </div>
       
     )
